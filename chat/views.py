@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -40,6 +40,10 @@ def chatView(request, chat_id):
         return render(request, 'chat.html', {'chat': chat_room, 'msg': '', 'preload': Message.messages_preload(chat_room.id)+"\n"})
     except ObjectDoesNotExist:
         return render(request, 'chat.html', {'chat': None, 'msg': 'Chat with this id does not exist.'})
+
+
+def redirect_view(request):
+    return redirect('/chats')
 
 
 

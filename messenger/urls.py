@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from chat.views import ChatViewset
+from chat.views import ChatViewset, redirect_view
 
 
 router = routers.DefaultRouter()
@@ -31,7 +31,8 @@ urlpatterns = [
    path('api/', include(router.urls)),
    path('accounts/', include('django.contrib.auth.urls')),
    path('accounts/', include('accounts.urls')),
-   path('chats/', include('chat.urls'))
+   path('chats/', include('chat.urls')),
+   path('', redirect_view)
    #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
