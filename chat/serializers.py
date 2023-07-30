@@ -8,12 +8,6 @@ class ChatSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'owner', 'members']
 
 
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ['id', 'text', 'sender', 'sent_time', 'chat']
-
-
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account

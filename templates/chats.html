@@ -1,0 +1,30 @@
+{% extends "default.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+    <table align="center">
+        <tr>
+            <td>
+                {% if chats %}
+                    <table>
+                        <tr>
+                            <td>
+                                Название
+                            </td>
+                        </tr>
+
+                        {% for chat in chats %}
+                            <tr>
+                                <td><a href="{{ chat.id }}">{{ chat.name }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <h2>Увы, но вы не состоите ни в одном чате(</h2>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

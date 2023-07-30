@@ -1,10 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    {% load static%}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>{% block title %} {% endblock title %}</title>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
 </head>
 <body>
 
+<!-- Responsive navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Chats</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                {% if not user.is_authenticated %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/accounts/login">Войти</a>
+                    </li>
+                {% else %}
+                    {% if not user.account.avatar == null %}
+                        <li class="nav-item active">
+                            <img src="{{ user.account.avatar.url }}" style="max-height: 5vh; border-radius: 100%; min-height: 5vh">
+                        </li>
+                    {% endif %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/accounts/pers_cabinet">{{ user.account.name }}</a>
+                    </li>
+                    <li class="nav-item active" styles="">
+                        <a class="nav-link" href="/accounts/log-out">Выйти</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="/chats/">Чаты</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+<!-- Page content-->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            {% block content %}
+                {{ flatpage.content }}
+            {% endblock content %}
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,0 +1,111 @@
+{% extends 'default.html' %}
+
+{% block content %}
+    {% if chat == null %}
+        <p>{{ msg }}</p>
+    {% else %}
+        <div class="container mt-3 p-5">
+            <h2><label for="chatLog">Chat: #{{ chat.name }}</label></h2>
+            <p></p>
+            <div class="row">
+                <div class="col-12 col-md-8">
+                    <div class="mb-2">
+                        <textarea class="form-control" id="chatLog" readonly rows="30">{{ preload }}</textarea>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chatMessageInput" placeholder="Enter your chat message">
+                        <div class="input-group-append">
+                            <button class="btn btn-success" id="chatMessageSend" type="button">Send</button>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="chatMembers" style="font-size: 150%; padding-bottom: 5%">Chat members</label>
+                    <ul style="list-style-type: none">
+                        {% for m in chat.members.all %}
+                            <li>
+                                <img src="{{ m.avatar.url }}" style="max-height: 5vh; border-radius: 100%; min-height: 5vh">{{ m.name }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {{ chat.id|json_script:"chatID" }}
+        </div>
+        <script>
+            const chatID = JSON.parse(document.getElementById('chatID').textContent);
+
+            let chatLog = document.querySelector("#chatLog");
+            let chatMessageInput = document.querySelector("#chatMessageInput");
+            let chatMessageSend = document.querySelector("#chatMessageSend");
+
+            // focus 'chatMessageInput' when user opens the page
+            chatMessageInput.focus();
+
+            // submit if the user presses the enter key
+            chatMessageInput.onkeyup = function(e) {
+                if (e.keyCode === 13) {  // enter key
+                    chatMessageSend.click();
+                }
+            };
+
+            // clear the 'chatMessageInput' and forward the message
+            chatMessageSend.onclick = function() {
+                if (chatMessageInput.value.length === 0) return;
+                chatSocket.send(JSON.stringify({
+                    'type':"text_message",
+                    "sender": {{user.account.id}} ,
+                    'message': chatMessageInput.value
+                }));
+                chatMessageInput.value = "";
+            };
+
+            let chatSocket = null;
+
+            function connect() {
+                let url = window.location.host + "/ws/chats/" + chatID
+                chatSocket = new WebSocket("ws://" + url);
+
+                chatSocket.onopen = function(e) {
+                    console.log("Successfully connected to the WebSocket.");
+                }
+
+                chatSocket.onclose = function(e) {
+                    console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+                    setTimeout(function() {
+                        console.log("Reconnecting...");
+                        connect();
+                    }, 2000);
+                };
+
+                chatSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    console.log(data);
+
+                    switch (data.type) {
+                        case "text_message":
+                            chatLog.value += data.sender + ": " + data.message + "\n";
+                            break;
+                        default:
+                            console.error("Unknown message type!");
+                            break;
+                    }
+
+                    // scroll 'chatLog' to the bottom
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                };
+
+                chatSocket.onerror = function(err) {
+                    console.log("WebSocket encountered an error: " + err.message);
+                    console.log("Closing the socket.");
+                    chatSocket.close();
+                }
+
+            }
+            connect();
+
+        </script>
+    {% endif %}
+{% endblock content %}
