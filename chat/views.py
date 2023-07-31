@@ -16,6 +16,11 @@ class ChatViewset(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
 
 
+class AccountViewset(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+
 class ChatsView(LoginRequiredMixin, ListView):
     model = Chat
     template_name = 'chats.html'

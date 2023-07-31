@@ -19,11 +19,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from chat.views import ChatViewset, redirect_view
-
+from chat.views import ChatViewset, redirect_view, AccountViewset
 
 router = routers.DefaultRouter()
 router.register(r'chats', ChatViewset)
+router.register(r'accounts', AccountViewset)
 
 
 urlpatterns = [
